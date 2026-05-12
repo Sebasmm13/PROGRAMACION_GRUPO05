@@ -1,0 +1,18 @@
+# ── Python ──────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# ── Entorno virtual (si usan venv) ──────────
+venv/
+env/
+.venv/
+
+# ── Flask / configuración local ─────────────
+instance/
+*.sqlite
+
+# ── Sistema operativo ────────────────────────
+.DS_Store
+Thumbs.db
