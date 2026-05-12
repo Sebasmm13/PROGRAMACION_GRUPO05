@@ -1,0 +1,254 @@
+/* ============================================================
+   index.css — Estilos globales del proyecto React
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+/* ─── VARIABLES DE COLOR ─────────────────────────────────── */
+:root {
+  --color-primario:   #0d6e3f;
+  --color-secundario: #1a1a2e;
+  --color-acento:     #f0a500;
+  --color-peligro:    #c0392b;
+  --color-sidebar:    #0f2b1f;
+  --color-texto:      #e8f5e9;
+  --color-card:       #1b3a2d;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-secundario);
+  color: var(--color-texto);
+  min-height: 100vh;
+}
+
+/* ════════════════════════════════════════
+   LOGIN
+   ════════════════════════════════════════ */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0a1628 0%, #0d3b24 50%, #0a1628 100%);
+}
+
+.login-card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+.login-logo      { font-size: 3rem; text-align: center; margin-bottom: 10px; }
+.login-titulo    { text-align: center; font-size: 1.1rem; font-weight: 600; color: var(--color-acento); margin-bottom: 5px; }
+.login-subtitulo { text-align: center; font-size: 0.8rem; color: #aaa; margin-bottom: 30px; }
+
+.form-field {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  color: #fff;
+  padding: 12px 15px;
+  width: 100%;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+  transition: border-color 0.3s;
+  font-family: 'Inter', sans-serif;
+}
+.form-field:focus        { outline: none; border-color: var(--color-primario); }
+.form-field::placeholder { color: #888; }
+
+.form-label { color: #aaa; font-size: 0.85rem; margin-bottom: 5px; display: block; }
+
+.btn-ingresar {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, var(--color-primario), #1a9e5f);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+.btn-ingresar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(13,110,63,0.5);
+}
+
+.alerta-error {
+  background: rgba(192,57,43,0.2);
+  border: 1px solid var(--color-peligro);
+  border-radius: 8px;
+  padding: 10px 15px;
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* ════════════════════════════════════════
+   SIDEBAR
+   ════════════════════════════════════════ */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 100vh;
+  width: 255px;
+  background: var(--color-sidebar);
+  padding: 25px 15px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  z-index: 100;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px 25px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 20px;
+}
+.sidebar-brand-icon { font-size: 2rem; }
+.sidebar-brand-text { font-size: 0.8rem; font-weight: 600; color: var(--color-acento); line-height: 1.3; }
+
+/* Botón del sidebar — usamos <button> en React */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  color: #b0c4b1;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  margin-bottom: 5px;
+  text-decoration: none;
+}
+.sidebar-link:hover          { background: rgba(255,255,255,0.08); color: #fff; }
+.sidebar-link.activo         { background: var(--color-primario); color: #fff; }
+.sidebar-link.logout         { color: #ff6b6b; }
+.sidebar-link.logout:hover   { background: rgba(192,57,43,0.2); color: #ff4444; }
+
+.sidebar-separador {
+  margin-top: auto;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 15px;
+}
+
+/* ════════════════════════════════════════
+   CONTENIDO PRINCIPAL
+   ════════════════════════════════════════ */
+.main-content { margin-left: 255px; padding: 30px; min-height: 100vh; }
+
+.seccion-titulo    { font-size: 1.6rem; font-weight: 700; color: #fff; margin-bottom: 5px; }
+.seccion-subtitulo { font-size: 0.9rem; color: #888; margin-bottom: 30px; }
+
+/* ─── CARDS ─────────────────────────────────────────────── */
+.card-custom {
+  background: var(--color-card);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 20px;
+  transition: transform 0.2s;
+}
+.card-custom:hover { transform: translateY(-3px); }
+
+.stat-card   { display: flex; align-items: center; gap: 15px; }
+.stat-icon   { font-size: 2.5rem; width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.stat-icon.verde    { background: rgba(13,110,63,0.3); }
+.stat-icon.amarillo { background: rgba(240,165,0,0.3); }
+.stat-icon.rojo     { background: rgba(192,57,43,0.3); }
+.stat-icon.azul     { background: rgba(41,128,185,0.3); }
+.stat-numero { font-size: 2rem; font-weight: 700; color: #fff; line-height: 1; }
+.stat-label  { font-size: 0.8rem; color: #888; margin-top: 4px; }
+
+/* ─── BOTÓN PRINCIPAL ────────────────────────────────────── */
+.btn-principal {
+  background: linear-gradient(135deg, var(--color-primario), #1a9e5f);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  padding: 12px 25px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+.btn-principal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(13,110,63,0.4);
+  color: #fff;
+}
+.btn-sm { padding: 5px 12px; font-size: 0.8rem; }
+
+/* ─── BADGES ─────────────────────────────────────────────── */
+.badge-estado  { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+.badge-alto    { background: rgba(192,57,43,0.3); color: #ff6b6b; }
+.badge-medio   { background: rgba(240,165,0,0.3);  color: #f0a500; }
+.badge-bajo    { background: rgba(13,110,63,0.3);  color: #4caf50; }
+
+/* ─── TABLA ──────────────────────────────────────────────── */
+.tabla-custom { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+.tabla-custom th { color: #888; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; padding: 10px 15px; }
+.tabla-custom td { background: rgba(255,255,255,0.04); padding: 14px 15px; color: #ddd; font-size: 0.9rem; }
+.tabla-custom td:first-child { border-radius: 8px 0 0 8px; }
+.tabla-custom td:last-child  { border-radius: 0 8px 8px 0; }
+
+/* ─── ZONA DE CARGA ──────────────────────────────────────── */
+.zona-carga {
+  border: 2px dashed rgba(255,255,255,0.2);
+  border-radius: 15px;
+  padding: 50px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+  display: block;
+}
+.zona-carga:hover { border-color: var(--color-primario); background: rgba(13,110,63,0.1); }
+.zona-carga-icon  { font-size: 3rem; margin-bottom: 15px; display: block; }
+
+/* ─── BARRA DE PROGRESO ──────────────────────────────────── */
+.barra-wrapper { background: rgba(255,255,255,0.08); border-radius: 50px; height: 8px; overflow: hidden; margin-top: 8px; }
+.barra-fill    { height: 100%; border-radius: 50px; background: linear-gradient(90deg, var(--color-primario), #1a9e5f); transition: width 1.5s ease; }
+
+/* ─── INPUTS ─────────────────────────────────────────────── */
+.input-custom {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  color: #fff;
+  padding: 12px 15px;
+  width: 100%;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+}
+.input-custom:focus { outline: none; border-color: var(--color-primario); }
+
+@media (max-width: 768px) {
+  .sidebar      { width: 100%; height: auto; position: relative; }
+  .main-content { margin-left: 0; padding: 15px; }
+}
