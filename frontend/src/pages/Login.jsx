@@ -4,9 +4,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-// Credenciales de prueba (en producción vendrían del backend)
-const USUARIO_VALIDO = 'admin'
-const CLAVE_VALIDA   = '1234'
+// Nota: Las credenciales ahora se validan en el backend
 
 export default function Login() {
   // useState: variables que React actualiza automáticamente en la pantalla
@@ -17,15 +15,29 @@ export default function Login() {
   const navigate = useNavigate()  // Para navegar a otra página
 
   // Se ejecuta cuando el usuario presiona "Ingresar"
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()  // Evita que la página se recargue
 
-    if (usuario === USUARIO_VALIDO && clave === CLAVE_VALIDA) {
-      // Guardamos sesión en localStorage (memoria del navegador)
-      localStorage.setItem('usuario', usuario)
-      navigate('/inicio')  // Redirigimos al dashboard
-    } else {
-      setError('Usuario o contraseña incorrectos.')
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || '/api';
+      const response = await fetch(`${API_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, clave })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Guardamos sesión en localStorage (memoria del navegador)
+        localStorage.setItem('usuario', data.usuario);
+        navigate('/inicio');  // Redirigimos al dashboard
+      } else {
+        setError(data.message || 'Usuario o contraseña incorrectos.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Error al conectar con el servidor.');
     }
   }
 

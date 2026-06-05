@@ -2,16 +2,31 @@
 # Render lo lee y configura el despliegue solo.
 
 services:
-  - type: web          # Tipo de servicio: sitio web estático
-    name: detectoil-ia # Nombre que aparecerá en Render (puedes cambiarlo)
-    env: static        # Indica que es un sitio estático (HTML/CSS/JS)
-    rootDir: proyecto_petroleo_react   # Subcarpeta del repo donde está el proyecto
+  # 1. Backend (API Python - Flask)
+  - type: web
+    name: detectoil-backend
+    env: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
 
-    buildCommand: npm install && npm run build   # Cómo construir el proyecto
-    staticPublishPath: ./dist                    # Carpeta que genera Vite al construir
-
+  # 2. Frontend (React)
+  - type: web
+    name: detectoil-ia
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: detectoil-backend
+          envVarKey: RENDER_EXTERNAL_URL
     routes:
-      # Redirige todo al index.html para que React Router funcione
       - type: rewrite
         source: /*
         destination: /index.html
