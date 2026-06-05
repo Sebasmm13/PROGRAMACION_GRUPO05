@@ -7,7 +7,7 @@ CORS(app)
 
 @app.route('/', methods=['GET'])
 def home():
-    return jsonify({"message": "API de DetectOil en Flask funcionando correctamente"})
+    return jsonify({"message": "Morancito tu terror"})
 
 @app.route('/api/login', methods=['POST'])
 def login():
