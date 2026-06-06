@@ -4,66 +4,91 @@
 import { useState, useRef } from 'react'
 
 export default function NuevaDeteccion() {
-  // Estados de React para controlar la UI
-  const [preview,    setPreview]    = useState(null)    // URL de la imagen cargada
-  const [analizando, setAnalizando] = useState(false)   // Si está procesando
-  const [resultado,  setResultado]  = useState(null)    // Resultado del análisis
-  const [progreso,   setProgreso]   = useState(0)       // Ancho de la barra (0-100)
+  const [archivo, setArchivo] = useState(null)
+  const [preview, setPreview] = useState(null)
+  const [analizando, setAnalizando] = useState(false)
+  const [resultado, setResultado] = useState(null)
+  const [progreso, setProgreso] = useState(0)
+  const [fecha, setFecha] = useState('')
+  const [zona, setZona] = useState('')
+  const [error, setError] = useState('')
 
-  const inputRef = useRef()  // Referencia al input de archivo (oculto)
+  const inputRef = useRef(null)
 
-  // Se ejecuta al seleccionar una imagen
   function handleArchivo(e) {
-    const archivo = e.target.files[0]
-    if (!archivo) return
+    const archivoSeleccionado = e.target.files[0]
+    if (!archivoSeleccionado) return
 
-    // FileReader: lee el archivo localmente y lo convierte a URL base64
+    setArchivo(archivoSeleccionado)
+
     const lector = new FileReader()
     lector.onload = ev => setPreview(ev.target.result)
-    lector.readAsDataURL(archivo)
+    lector.readAsDataURL(archivoSeleccionado)
 
-    // Reiniciamos resultado anterior
     setResultado(null)
     setProgreso(0)
+    setError('')
   }
 
-  // Simula el proceso de análisis con IA
-  function handleAnalizar() {
-    if (!preview) { alert('⚠️ Primero carga una imagen.'); return }
+  async function handleAnalizar() {
+    if (!archivo) {
+      alert('⚠️ Primero carga una imagen.')
+      return
+    }
 
     setAnalizando(true)
-    setProgreso(10)
+    setProgreso(20)
+    setResultado(null)
+    setError('')
 
-    // Simula progreso gradual
-    setTimeout(() => setProgreso(50),  500)
-    setTimeout(() => setProgreso(90),  1200)
-    setTimeout(() => setProgreso(100), 1800)
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api'
 
-    // Muestra resultado después de 2.5 segundos
-    setTimeout(() => {
-      setAnalizando(false)
-      setResultado({
-        estado:    'DERRAME DETECTADO',
-        area:      '2.4 km²',
-        confianza: '87%',
-        severidad: 'Media',
+      const formData = new FormData()
+      formData.append('imagen', archivo)
+      formData.append('fecha', fecha)
+      formData.append('zona', zona)
+
+      setProgreso(50)
+
+      const response = await fetch(`${API_URL}/predict`, {
+        method: 'POST',
+        body: formData
       })
-    }, 2500)
+
+      setProgreso(85)
+
+      const data = await response.json()
+
+      if (data.success) {
+        setResultado(data)
+        setProgreso(100)
+      } else {
+        setError(data.message || 'No se pudo analizar la imagen.')
+      }
+
+    } catch (err) {
+      console.error(err)
+      setError('Error al conectar con el servidor.')
+    } finally {
+      setAnalizando(false)
+    }
   }
 
   return (
     <>
       <h1 className="seccion-titulo">🛢️ Nueva Detección</h1>
-      <p className="seccion-subtitulo">Carga una imagen satelital para detectar derrames de petróleo</p>
+      <p className="seccion-subtitulo">
+        Carga una imagen satelital para detectar derrames de petróleo
+      </p>
 
       <div className="row g-3">
 
-        {/* ── Columna izquierda: formulario ────────────── */}
+        {/* Columna izquierda */}
         <div className="col-md-6">
           <div className="card-custom">
             <h5 style={{ color: '#ccc', marginBottom: 20 }}>📁 Cargar Imagen</h5>
 
-            {/* Zona de carga clickeable */}
             <div className="zona-carga" onClick={() => inputRef.current.click()}>
               <span className="zona-carga-icon">🛰️</span>
               <p style={{ color: '#aaa', margin: 0 }}>
@@ -74,7 +99,6 @@ export default function NuevaDeteccion() {
               </p>
             </div>
 
-            {/* Input oculto — se activa al hacer clic en la zona */}
             <input
               ref={inputRef}
               type="file"
@@ -83,42 +107,59 @@ export default function NuevaDeteccion() {
               onChange={handleArchivo}
             />
 
-            {/* Vista previa de la imagen seleccionada */}
             {preview && (
               <img
-                src={preview}
-                alt="Vista previa"
-                style={{ width: '100%', borderRadius: 10, marginTop: 15 }}
-              />
+              src={preview}
+              alt="Vista previa"
+              style={{
+                width: '100%',
+                maxHeight: '260px',
+                objectFit: 'contain',
+                borderRadius: 10,
+                marginTop: 15,
+                background: '#0f241c'
+              }}
+            />
             )}
 
-            {/* Campos adicionales */}
             <div style={{ marginTop: 20 }}>
               <label className="form-label">Fecha de captura</label>
-              <input type="date" className="input-custom" />
+              <input
+                type="date"
+                className="input-custom"
+                value={fecha}
+                onChange={e => setFecha(e.target.value)}
+              />
 
               <label className="form-label">Zona de monitoreo</label>
-              <select className="input-custom">
-                <option>Selecciona una zona...</option>
-                <option>Loreto, Perú</option>
-                <option>Napo, Ecuador</option>
-                <option>Sucumbíos, Ecuador</option>
-                <option>Putumayo, Colombia</option>
+              <select
+                className="input-custom"
+                value={zona}
+                onChange={e => setZona(e.target.value)}
+              >
+                <option value="">Selecciona una zona...</option>
+                <option value="Loreto, Perú">Loreto, Perú</option>
+                <option value="Napo, Ecuador">Napo, Ecuador</option>
+                <option value="Sucumbíos, Ecuador">Sucumbíos, Ecuador</option>
+                <option value="Putumayo, Colombia">Putumayo, Colombia</option>
               </select>
             </div>
 
-            <button className="btn-principal" onClick={handleAnalizar} disabled={analizando}>
+            <button
+              className="btn-principal"
+              onClick={handleAnalizar}
+              disabled={analizando}
+            >
               {analizando ? '⏳ Analizando...' : '🔍 Analizar Imagen'}
             </button>
           </div>
         </div>
 
-        {/* ── Columna derecha: resultado ───────────────── */}
+        {/* Columna derecha */}
         <div className="col-md-6">
           <div className="card-custom" style={{ minHeight: 300 }}>
             <h5 style={{ color: '#ccc', marginBottom: 20 }}>📊 Resultado del Análisis</h5>
 
-            {/* Barra de progreso (visible mientras analiza) */}
             {analizando && (
               <>
                 <p style={{ color: '#aaa', fontSize: '0.85rem' }}>
@@ -130,22 +171,52 @@ export default function NuevaDeteccion() {
               </>
             )}
 
-            {/* Resultado final */}
+            {error && (
+              <p style={{ color: '#ff6b6b', marginTop: 15 }}>
+                ❌ {error}
+              </p>
+            )}
+
             {resultado && (
               <div style={{ marginTop: 20 }}>
-                <p style={{ color: '#ff6b6b', fontWeight: 700, fontSize: '1.1rem' }}>
-                  ⚠️ {resultado.estado}
+                <p style={{
+                  color: resultado.clase_tecnica === 'oil' ? '#ff6b6b' : '#00d084',
+                  fontWeight: 700,
+                  fontSize: '1.1rem'
+                }}>
+                  {resultado.clase_tecnica === 'oil' ? '⚠️' : '✅'} {resultado.resultado}
                 </p>
+
                 <div style={{ marginTop: 15, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  <div><span style={{ color: '#888' }}>Área estimada:</span> <strong style={{ color: '#fff' }}>{resultado.area}</strong></div>
-                  <div><span style={{ color: '#888' }}>Confianza IA:</span>  <strong style={{ color: '#fff' }}>{resultado.confianza}</strong></div>
-                  <div><span style={{ color: '#888' }}>Severidad:</span>     <strong style={{ color: '#f0a500' }}>{resultado.severidad}</strong></div>
+                  <div>
+                    <span style={{ color: '#888' }}>Confianza IA:</span>{' '}
+                    <strong style={{ color: '#fff' }}>{resultado.confianza}%</strong>
+                  </div>
+
+                  <div>
+                    <span style={{ color: '#888' }}>Probabilidad de derrame:</span>{' '}
+                    <strong style={{ color: '#fff' }}>{resultado.probabilidad_derrame}%</strong>
+                  </div>
+
+                  <div>
+                    <span style={{ color: '#888' }}>Probabilidad sin derrame:</span>{' '}
+                    <strong style={{ color: '#fff' }}>{resultado.probabilidad_sin_derrame}%</strong>
+                  </div>
+
+                  <div>
+                    <span style={{ color: '#888' }}>Fecha de captura:</span>{' '}
+                    <strong style={{ color: '#fff' }}>{fecha || 'No especificada'}</strong>
+                  </div>
+
+                  <div>
+                    <span style={{ color: '#888' }}>Zona monitoreada:</span>{' '}
+                    <strong style={{ color: '#fff' }}>{zona || 'No especificada'}</strong>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Estado vacío inicial */}
-            {!analizando && !resultado && (
+            {!analizando && !resultado && !error && (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: '#555' }}>
                 <span style={{ fontSize: '3rem' }}>🤖</span>
                 <p style={{ marginTop: 10 }}>
