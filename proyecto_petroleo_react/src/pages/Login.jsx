@@ -4,40 +4,28 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-// Nota: Las credenciales ahora se validan en el backend
+// Credenciales de prueba (en producción vendrían del backend)
+const USUARIO_VALIDO = 'admin'
+const CLAVE_VALIDA = '1234'
 
 export default function Login() {
   // useState: variables que React actualiza automáticamente en la pantalla
   const [usuario, setUsuario] = useState('')
-  const [clave,   setClave]   = useState('')
-  const [error,   setError]   = useState('')
+  const [clave, setClave] = useState('')
+  const [error, setError] = useState('')
 
   const navigate = useNavigate()  // Para navegar a otra página
 
   // Se ejecuta cuando el usuario presiona "Ingresar"
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault()  // Evita que la página se recargue
 
-    try {
-      const API_URL = import.meta.env.VITE_API_URL || '/api';
-      const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ usuario, clave })
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        // Guardamos sesión en localStorage (memoria del navegador)
-        localStorage.setItem('usuario', data.usuario);
-        navigate('/inicio');  // Redirigimos al dashboard
-      } else {
-        setError(data.message || 'Usuario o contraseña incorrectos.');
-      }
-    } catch (err) {
-      console.error(err);
-      setError('Error al conectar con el servidor.');
+    if (usuario === USUARIO_VALIDO && clave === CLAVE_VALIDA) {
+      // Guardamos sesión en localStorage (memoria del navegador)
+      localStorage.setItem('usuario', usuario)
+      navigate('/inicio')  // Redirigimos al dashboard
+    } else {
+      setError('Usuario o contraseña incorrectos.')
     }
   }
 
@@ -49,7 +37,7 @@ export default function Login() {
         <div className="login-logo">🛢️</div>
         <div className="login-titulo">DetectOil IA</div>
         <div className="login-subtitulo">
-          Detección de Derrames de Petróleo en Entornos Marítimos
+          Sistema de Detección de Derrames en la Amazonía
         </div>
 
         {/* Mensaje de error (solo aparece si error !== '') */}
@@ -86,8 +74,8 @@ export default function Login() {
         </form>
 
         {/* Nota de demo (quitar en producción) */}
-        <p style={{ textAlign:'center', fontSize:'0.75rem', color:'#555', marginTop:20 }}>
-          🧪 Demo: <strong style={{color:'#888'}}>admin</strong> / <strong style={{color:'#888'}}>1234</strong>
+        <p style={{ textAlign: 'center', fontSize: '0.75rem', color: '#555', marginTop: 20 }}>
+          🧪 Demo: <strong style={{ color: '#888' }}>admin</strong> / <strong style={{ color: '#888' }}>1234</strong>
         </p>
 
       </div>

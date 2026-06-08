@@ -29,7 +29,7 @@ export default function Sidebar({ seccionActiva }) {
         <span className="sidebar-brand-icon">🛢️</span>
         <span className="sidebar-brand-text">
           DetectOil IA<br />
-          <small style={{ color: '#666', fontWeight: 300 }}>Grupo 05</small>
+          <small style={{ color: '#666', fontWeight: 300 }}>Monitoreo Marítimo con IA</small>
         </span>
       </div>
 
