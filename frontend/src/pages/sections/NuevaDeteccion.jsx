@@ -3,7 +3,7 @@
 // Enfoque: Detección de derrames en entornos marítimos
 // ============================================================
 import { useState, useRef } from 'react'
-import { guardarAnalisis } from '../../services/historialService'
+
 
 // Mares y zonas marítimas principales para monitoreo
 const ZONAS_MARITIMAS = [
@@ -82,12 +82,7 @@ export default function NuevaDeteccion() {
         setResultado(data)
         setProgreso(100)
 
-        // Guardar automáticamente en el historial
-        guardarAnalisis({
-          ...data,
-          fecha: fecha,
-          zona: zonaFinal,
-        })
+
       } else {
         setError(data.message || 'No se pudo analizar la imagen.')
       }

@@ -30,8 +30,13 @@ export default function Inicio() {
 
   // Cargar estadísticas y actividad reciente al montar el componente
   useEffect(() => {
-    setStats(obtenerEstadisticas())
-    setRecientes(obtenerRecientes(5))
+    async function cargarDatos() {
+      const statsData = await obtenerEstadisticas()
+      const recientesData = await obtenerRecientes()
+      setStats(statsData)
+      setRecientes(recientesData)
+    }
+    cargarDatos()
   }, [])
 
   // Tarjetas de estadísticas dinámicas

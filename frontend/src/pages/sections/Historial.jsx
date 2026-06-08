@@ -12,7 +12,11 @@ export default function Historial() {
 
   // Cargar historial real al montar el componente
   useEffect(() => {
-    setDatos(obtenerHistorial())
+    async function cargar() {
+      const historialData = await obtenerHistorial()
+      setDatos(historialData)
+    }
+    cargar()
   }, [])
 
   // Filtra las filas según el texto buscado
