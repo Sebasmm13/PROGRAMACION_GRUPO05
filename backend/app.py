@@ -79,19 +79,24 @@ USUARIO_VALIDO = "admin"
 CLAVE_VALIDA = "1234"
 
 # ============================================================
-# CARGA DEL MODELO ENTRENADO
+# CARGA DEL MODELO ENTRENADO (LAZY LOADING)
 # ============================================================
 
 MODEL_PATH = Path("models/detectoil_model.keras")
 CLASSES_PATH = Path("models/class_names.json")
 
-model = tf.keras.models.load_model(MODEL_PATH)
+modelo_cargado = None
+class_names = None
 
-with open(CLASSES_PATH, "r") as f:
-    class_names = json.load(f)
-
-print("Modelo cargado correctamente")
-print("Clases:", class_names)
+def get_model():
+    global modelo_cargado, class_names
+    if modelo_cargado is None:
+        print("Cargando modelo de TensorFlow en el primer uso...")
+        modelo_cargado = tf.keras.models.load_model(MODEL_PATH)
+        with open(CLASSES_PATH, "r") as f:
+            class_names = json.load(f)
+        print("Modelo cargado correctamente")
+    return modelo_cargado
 
 # ============================================================
 # RUTAS DE LA API
@@ -136,7 +141,8 @@ def predict():
         img_array = np.expand_dims(img_array, axis=0)
 
         # Predicción del modelo
-        prediccion = model.predict(img_array)[0][0]
+        modelo = get_model()
+        prediccion = modelo.predict(img_array)[0][0]
 
         probabilidad_derrame = float(prediccion)
         probabilidad_sin_derrame = 1 - probabilidad_derrame
