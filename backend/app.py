@@ -8,7 +8,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from PIL import Image
-import tensorflow as tf
 import numpy as np
 import json
 from pathlib import Path
@@ -91,6 +90,7 @@ class_names = None
 def get_model():
     global modelo_cargado, class_names
     if modelo_cargado is None:
+        import tensorflow as tf
         print("Cargando modelo de TensorFlow en el primer uso...")
         modelo_cargado = tf.keras.models.load_model(MODEL_PATH)
         with open(CLASSES_PATH, "r") as f:
